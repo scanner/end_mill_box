@@ -15,3 +15,6 @@ lid.)
 We used the font from: http://www.thingiverse.com/thing:22730
 for the label text.
 
+You need to render and export the top, bottom, and dual-strusion label
+text separately (I had problems running the 12 hour builds that would
+print both top and bottom at the same time.)

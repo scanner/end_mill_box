@@ -129,11 +129,41 @@ module top_and_bottom() {
 //////////////////////////////////////////////////////////////////////////////
 //
 module box_top_label(size = 5.0) {
-    translate([0, (box_w / 2) + 2.5,1]) {
+    // translate([0, (box_w / 2) + 2.5,1]) {
+     translate([0,0,1]) {
         rotate([180,0,0]) {
             label("Scanner's end mills", size = size);
         }
     }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+module top() {
+    // this is a kludge.. because we have the text -padding below the xy plane
+    // we need to basically clip everything downbelow that plane to make sure
+    // our slicer and printer do not think the print head is 0.01 mils in to
+    // the print bed..
+    //
+    difference() {
+        translate([0,0, top_h/2]) {
+            box_top();
+        }
+        translate([0,0,-padding]) {
+            box_top_label();
+        }
+        translate([0,box_w/2 + 2.5,-(5+padding)]) {
+            box(box_l, box_w, 10);
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//
+module bottom() {
+   translate([0, 0, bottom_h/2]) {
+        box_bottom();
+   }
 }
 
 ///////////////
@@ -143,5 +173,6 @@ module box_top_label(size = 5.0) {
 // 'top_and_bottom()' then comment that out and uncomment 'box_top_label()' and
 // generate the label STL.
 //
-top_and_bottom();
+// top();
 // box_top_label();
+bottom();
