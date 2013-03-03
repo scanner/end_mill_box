@@ -13,18 +13,20 @@ padding = 0.01;
 
 // These parameters drive the actual box's size.
 //
-thickness = 2;
+thickness = 3;
 bit_max_h = 82;
 bit_min_h = 46;
-bit_hole_l = 11.5;
+// bit_max_h = 20; // test height
+// bit_min_h = 15; // test height
+bit_hole_l = 12;
 
-bit_rows = 2;
-bits_per_row = 1;
+bit_rows = 3;
+bits_per_row = 8;
 
 inter_bit_spacing = 10;
 inter_row_spacing = 5;
 
-top_overlap = 10;
+top_overlap = 7;
 
 bottom_h = bit_min_h + thickness;
 top_h = bit_max_h - bit_min_h + thickness + top_overlap;
@@ -80,7 +82,7 @@ module box_top(fudge = 0) {
         //
         translate([-((box_l/2) - bit_hole_l-1),
                 -((box_w/2) - bit_hole_l+1),
-                ((bit_max_h/2) - (bottom_h/2)) +  thickness]) {
+                ((bit_max_h/2) - (bottom_h/2)) +  thickness + 0.6]) {
             for( i = [0:bit_rows-1] ) {
                 for( j = [0:bits_per_row-1] ) {
                     translate([ j * (bit_hole_l + inter_bit_spacing),
@@ -113,7 +115,7 @@ module top_and_bottom() {
                 }
         }
         translate([0,0,-padding]) {
-//            box_top_label();
+            box_top_label();
         }
         translate([0,box_w/2 + 2.5,-(5+padding)]) {
             box(box_l, box_w, 10);
@@ -135,4 +137,4 @@ module box_top_label(size = 5.0) {
 ///////////////
 //
 top_and_bottom();
-// box_top_label(size = 4.99);
+// box_top_label();
