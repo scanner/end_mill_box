@@ -7,6 +7,9 @@
 // car they would not scatter all over.
 //
 use <MCAD/shapes.scad>;
+
+// The font came from: http://www.thingiverse.com/thing:22730
+//
 use <font_DesignerBlock_med.scad>;
 
 padding = 0.01;
@@ -135,6 +138,10 @@ module box_top_label(size = 5.0) {
 
 ///////////////
 ///////////////
+//
+// To generate .stl files for dualstrusion first generate the
+// 'top_and_bottom()' then comment that out and uncomment 'box_top_label()' and
+// generate the label STL.
 //
 top_and_bottom();
 // box_top_label();
