@@ -17,22 +17,27 @@ padding = 0.01;
 // These parameters drive the actual box's size.
 //
 thickness = 3;
-bit_max_h = 82;
-bit_min_h = 46;
+// bit_max_h = 82;
+bit_max_h = 95;
+bit_min_h = 50;
 // bit_max_h = 20; // test height
 // bit_min_h = 15; // test height
-bit_hole_l = 12;
-
+bit_hole_l = 14;
+// lbl_text = "Scanners end mills";
+ lbl_text = "S";
 bit_rows = 3;
 bits_per_row = 8;
 
-inter_bit_spacing = 10;
-inter_row_spacing = 5;
+inter_bit_spacing = 4;
+inter_row_spacing = 3;
 
 top_overlap = 7;
 
 bottom_h = bit_min_h + thickness;
 top_h = bit_max_h - bit_min_h + thickness + top_overlap;
+
+end_mill_holes_w = ((bit_rows-1) * (bit_hole_l + inter_row_spacing));
+end_mill_holes_l = ((bits_per_row-1) * (bit_hole_l + inter_bit_spacing));
 
 box_w = (thickness * 2) + (bit_rows * (bit_hole_l + inter_row_spacing));
 box_l = (thickness * 2) + (bits_per_row * (bit_hole_l + inter_bit_spacing));
@@ -47,12 +52,12 @@ module end_mill_hole() {
 //
 module box_bottom() {
     difference() {
-        roundedBox(box_l, box_w, bit_min_h + thickness, 10);
-        translate([0,0,((top_h - bottom_h)/2) + (bottom_h - top_overlap)]) {
-            rotate([0,180,0]) {
-                box_top(fudge = -0.2);
-            }
-        }
+        // roundedBox(box_l, box_w, bit_min_h + thickness, 10);
+        // translate([0,0,((top_h - bottom_h)/2) + (bottom_h - top_overlap)]) {
+        //     rotate([0,180,0]) {
+        //         box_top(fudge = -0.2);
+        //     }
+        // }
         // Holes for our end mills. We keep our end mills in the packaging we
         // get them in because that has nice writing on it.
         //
@@ -118,7 +123,7 @@ module top_and_bottom() {
                 }
         }
         translate([0,0,-padding]) {
-            box_top_label();
+            box_top_label( y_off = (box_w / 2) + 2.5);
         }
         translate([0,box_w/2 + 2.5,-(5+padding)]) {
             box(box_l, box_w, 10);
@@ -128,11 +133,10 @@ module top_and_bottom() {
 
 //////////////////////////////////////////////////////////////////////////////
 //
-module box_top_label(size = 5.0) {
-    // translate([0, (box_w / 2) + 2.5,1]) {
-     translate([0,0,1]) {
+module box_top_label(size = 5.0, y_off = 0) {
+    translate([0, y_off,1]) {
         rotate([180,0,0]) {
-            label("Scanner's end mills", size = size);
+            label(lbl_text, size = size);
         }
     }
 }
@@ -166,6 +170,23 @@ module bottom() {
    }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//
+// the grid of end mill holes centered on 0,0,0
+//
+module end_mill_holes() {
+    translate([-(end_mill_holes_l/2),-(end_mill_holes_w/2),0]) {
+        for( i = [0:bit_rows-1] ) {
+            for( j = [0:bits_per_row-1] ) {
+                translate([ j * (bit_hole_l + inter_bit_spacing),
+                        i * (bit_hole_l + inter_row_spacing), 0]) {
+                    end_mill_hole();
+                }
+            }
+        }
+    }
+}
+
 ///////////////
 ///////////////
 //
@@ -174,5 +195,14 @@ module bottom() {
 // generate the label STL.
 //
 // top();
-// box_top_label();
-bottom();
+// box_top_label();                           // bottom and top by themselves
+// box_top_label( y_off = (box_w / 2) + 2.5); // top_and_bottom printed together
+// bottom();
+//
+
+end_mill_holes();
+
+// If you are printing a smaller box you can print both the top and bottom at
+// the same time.
+//
+// top_and_bottom();
