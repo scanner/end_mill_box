@@ -25,10 +25,10 @@ bit_min_h = 50;
 bit_hole_l = 14;
 // lbl_text = "Scanners end mills";
  lbl_text = "S";
-bit_rows = 3;
-bits_per_row = 8;
+bit_rows = 2;
+bits_per_row = 2;
 
-inter_bit_spacing = 4;
+inter_bit_spacing = 3;
 inter_row_spacing = 3;
 
 top_overlap = 7;
@@ -52,24 +52,24 @@ module end_mill_hole() {
 //
 module box_bottom() {
     difference() {
-        // roundedBox(box_l, box_w, bit_min_h + thickness, 10);
-        // translate([0,0,((top_h - bottom_h)/2) + (bottom_h - top_overlap)]) {
-        //     rotate([0,180,0]) {
-        //         box_top(fudge = -0.2);
-        //     }
-        // }
+        translate([0,0,bottom_h/2]) {
+            roundedBox(box_l, box_w, bottom_h, 10);
+        }
+
         // Holes for our end mills. We keep our end mills in the packaging we
         // get them in because that has nice writing on it.
         //
-        translate([-((box_l/2) - bit_hole_l-1),
-                -((box_w/2) - bit_hole_l+1),
-                ((bit_max_h/2) - (bottom_h/2)) +  thickness]) {
-            for( i = [0:bit_rows-1] ) {
-                for( j = [0:bits_per_row-1] ) {
-                    translate([ j * (bit_hole_l + inter_bit_spacing),
-                            i * (bit_hole_l + inter_row_spacing), 0]) {
-                        end_mill_hole();
-                    }
+        translate([0,0,bit_max_h/2 + thickness]) {
+            end_mill_holes();
+        }
+
+        // and the inner lip to interlock with the top
+        //
+        // translate([0,0,((top_h - bottom_h)/2) + (bottom_h - top_overlap)]) {
+        translate([0,0,(top_h/2) + (bottom_h - top_overlap)]) {
+            rotate([0,180,0]) {
+                translate([0,0,-(top_h/2)]) {
+                    box_top(fudge = -0.2);
                 }
             }
         }
@@ -80,34 +80,30 @@ module box_bottom() {
 //
 module box_top(fudge = 0) {
     difference() {
+       translate([0,0,top_h/2]) {
         roundedBox(box_l + padding , box_w + padding, top_h, 10);
-        translate([0,0,top_h - top_overlap - thickness - 2]) {
-            roundedBox(box_l - thickness + fudge, box_w - thickness + fudge,
-                top_h, 10);
-        }
-        // Holes for our end mills. We keep our end mills in the packaging we
-        // get them in because that has nice writing on it.
-        //
-        translate([-((box_l/2) - bit_hole_l-1),
-                -((box_w/2) - bit_hole_l+1),
-                ((bit_max_h/2) - (bottom_h/2)) +  thickness + 0.6]) {
-            for( i = [0:bit_rows-1] ) {
-                for( j = [0:bits_per_row-1] ) {
-                    translate([ j * (bit_hole_l + inter_bit_spacing),
-                            i * (bit_hole_l + inter_row_spacing), 0]) {
-                        end_mill_hole();
-                    }
-                }
-            }
-        }
+       }
 
+       // The cutout for the lip that interlocks with the bottom
+       //
+       translate([0,0, (top_h/2) + (top_h - top_overlap - thickness - 2) ]) {
+           roundedBox(box_l - thickness + fudge, box_w - thickness + fudge,
+               top_h, 10);
+       }
+       // Holes for our end mills. We keep our end mills in the packaging we
+       // get them in because that has nice writing on it.
+       //
+        translate([0,0, (bit_max_h / 2) + thickness]) {
+            end_mill_holes();
+        }
     }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //
 module top_and_bottom() {
-   translate([0, -((box_w / 2) + 2.5), bottom_h/2]) {
+   // translate([0, -((box_w / 2) + 2.5), bottom_h/2]) {
+   translate([0, -((box_w / 2) + 2.5), 0]) {
         box_bottom();
    }
 
@@ -118,13 +114,11 @@ module top_and_bottom() {
     //
     difference() {
         translate([0, (box_w / 2) + 2.5,0]) {
-                translate([0,0, top_h/2]) {
-                    box_top();
-                }
+            box_top();
         }
-        translate([0,0,-padding]) {
-            box_top_label( y_off = (box_w / 2) + 2.5);
-        }
+        // translate([0,0,-padding]) {
+        //     box_top_label( y_off = (box_w / 2) + 2.5);
+        // }
         translate([0,box_w/2 + 2.5,-(5+padding)]) {
             box(box_l, box_w, 10);
         }
@@ -200,9 +194,11 @@ module end_mill_holes() {
 // bottom();
 //
 
-end_mill_holes();
+// end_mill_holes();
+// box_bottom();
+// box_top();
 
 // If you are printing a smaller box you can print both the top and bottom at
 // the same time.
 //
-// top_and_bottom();
+top_and_bottom();
