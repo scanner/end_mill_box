@@ -23,10 +23,10 @@ bit_min_h = 50;
 // bit_max_h = 20; // test height
 // bit_min_h = 15; // test height
 bit_hole_l = 14;
-// lbl_text = "Scanners end mills";
- lbl_text = "S";
-bit_rows = 2;
-bits_per_row = 2;
+lbl_text = "Scanners end mills";
+// lbl_text = "S";
+bit_rows = 3;
+bits_per_row = 8;
 
 inter_bit_spacing = 3;
 inter_row_spacing = 3;
@@ -144,13 +144,17 @@ module top() {
     // the print bed..
     //
     difference() {
-        translate([0,0, top_h/2]) {
-            box_top();
-        }
+        box_top();
+
+        // subtract out where the label is printed.
         translate([0,0,-padding]) {
-            box_top_label();
+            box_top_label(y_off = 4);
         }
-        translate([0,box_w/2 + 2.5,-(5+padding)]) {
+
+        // Clipping below the platform to make sure we are not
+        // printing below the platform.
+        //
+        translate([0,0,-(5+padding)]) {
             box(box_l, box_w, 10);
         }
     }
@@ -159,7 +163,7 @@ module top() {
 //////////////////////////////////////////////////////////////////////////////
 //
 module bottom() {
-   translate([0, 0, bottom_h/2]) {
+   translate([0, 0, 0]) {
         box_bottom();
    }
 }
@@ -188,10 +192,9 @@ module end_mill_holes() {
 // 'top_and_bottom()' then comment that out and uncomment 'box_top_label()' and
 // generate the label STL.
 //
-// top();
-// box_top_label();                           // bottom and top by themselves
-// box_top_label( y_off = (box_w / 2) + 2.5); // top_and_bottom printed together
-// bottom();
+//top();
+// box_top_label( y_off = 4);                 // bottom and top by themselves
+bottom();
 //
 
 // end_mill_holes();
@@ -201,4 +204,5 @@ module end_mill_holes() {
 // If you are printing a smaller box you can print both the top and bottom at
 // the same time.
 //
-top_and_bottom();
+// top_and_bottom();
+// box_top_label( y_off = (box_w / 2) + 2.5); // top_and_bottom printed together
