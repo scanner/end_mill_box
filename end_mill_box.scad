@@ -197,10 +197,6 @@ module end_mill_holes() {
 bottom();
 //
 
-// end_mill_holes();
-// box_bottom();
-// box_top();
-
 // If you are printing a smaller box you can print both the top and bottom at
 // the same time.
 //
